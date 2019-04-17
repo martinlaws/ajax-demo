@@ -1,12 +1,4 @@
-$(document).ready(() => {
-  console.log('hi!')
-  setTimeout(() => {
-    $('.title').html(title);
-  }, 1000)
-
-  const title = '<h2>Hello, LHL!</h2>'
-})
-
+const title = '<h2>Hello, LHL!</h2>'
 const changeQuery = () => {
   const param = $('#query-param').val()
 
@@ -40,3 +32,10 @@ const changeQuery = () => {
     console.log(XHR, status, err)
   })
 }
+
+$(document).ready(() => {
+  console.log('hi!')
+  setTimeout(() => {
+    $('.title').html(title);
+  }, 1000)
+})
