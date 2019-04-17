@@ -1,14 +1,18 @@
-const title = '<h2>Hello, LHL!</h2>'
-
 $(document).ready(() => {
   console.log('hi!')
   setTimeout(() => {
     $('.title').html(title);
   }, 1000)
 
+  const title = '<h2>Hello, LHL!</h2>'
+})
+
+const changeQuery = () => {
+  const param = $('#query-param').val()
+
   $.ajax({
     type: 'GET',
-    url: 'https://www.reddit.com/r/dogpicturesasdasdasdas.json',
+    url: `https://www.reddit.com/r/${param}.json`,
     dataType: 'JSON'
   })
   .done( data => {
@@ -20,7 +24,7 @@ $(document).ready(() => {
       imgWrapper.href = `http://reddit.com${dogPhoto.data.permalink}`
       imgWrapper.target = '_blank'
       $(imgWrapper).html(imgTag)
-      // console.log(imgTag, dogPhoto)
+
       $('.content').append(imgWrapper)
     })
   })
@@ -34,4 +38,4 @@ $(document).ready(() => {
     $('.content').append(errorMessage)
     console.log(XHR, status, err)
   })
-})
+}
