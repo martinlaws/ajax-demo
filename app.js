@@ -1,41 +1,46 @@
 const title = '<h2>Hello, LHL!</h2>'
-const changeQuery = () => {
-  const param = $('#query-param').val()
+
+const handleClick = () => {
+  const subreddit = $('#subreddit-input').val()
 
   $.ajax({
     type: 'GET',
-    url: `https://www.reddit.com/r/${param}.json`,
+    url: `https://www.reddit.com/r/${subreddit}.json`,
     dataType: 'JSON'
   })
   .done( data => {
-    data.data.children.forEach((dogPhoto) => {
-      const imgTag = document.createElement('img')
-      imgTag.src = dogPhoto.data.thumbnail
-      imgTag.title = dogPhoto.data.title
+    const markupArray = []
+
+    data.data.children.forEach((post) => {
+      const { thumbnail, title, permalink } = post.data
+
+      if (thumbnail !== 'self' && thumbnail !== '') {
+        const markup = `
+        <a href="http://www.reddit.com${permalink}" target="_blank">
+          <img src="${thumbnail}" title="${title}"/>
+        </a>
+      `
+
+      markupArray.push(markup)
+      }
       
-      const imgWrapper = document.createElement('a')
-      imgWrapper.href = `http://reddit.com${dogPhoto.data.permalink}`
-      imgWrapper.target = '_blank'
-      $(imgWrapper).html(imgTag)
-
-      $('.content').append(imgWrapper)
     })
-  })
-  .fail( (XHR, status, err) => {
-    const errorMessage = document.createElement('h2')
-    $(errorMessage).text(`
-      Error status: ${XHR.responseJSON.error} | 
-      Error message: ${XHR.responseJSON.message}
-    `)
 
-    $('.content').append(errorMessage)
-    console.log(XHR, status, err)
+    const formattedMarkup = markupArray.join('')
+    
+    $('.content').append(formattedMarkup)
+  })
+  .fail( (XHR) => {
+    console.log(XHR)
+
+    const { error, message } = XHR.responseJSON
+
+    const errorMarkup = `
+      <div style="background-color: red">
+        <h2 style="color: white">${error}: ${message}</h2>
+      </div>
+    `
+
+    $('.content').append(errorMarkup)
   })
 }
-
-$(document).ready(() => {
-  console.log('hi!')
-  setTimeout(() => {
-    $('.title').html(title);
-  }, 1000)
-})
