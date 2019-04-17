@@ -7,9 +7,11 @@ $(document).ready(() => {
   }, 1000)
 
   $.ajax({
-    url: 'https://www.reddit.com/r/dogpictures.json'
+    type: 'GET',
+    url: 'https://www.reddit.com/r/dogpicturesasdasdasdas.json',
+    dataType: 'JSON'
   })
-  .done(data => {
+  .done( data => {
     data.data.children.forEach((dogPhoto) => {
       const imgTag = document.createElement('img')
       imgTag.src = dogPhoto.data.thumbnail
@@ -21,6 +23,15 @@ $(document).ready(() => {
       // console.log(imgTag, dogPhoto)
       $('.content').append(imgWrapper)
     })
-    console.log(data.data.children)
+  })
+  .fail( (XHR, status, err) => {
+    const errorMessage = document.createElement('h2')
+    $(errorMessage).text(`
+      Error status: ${XHR.responseJSON.error} | 
+      Error message: ${XHR.responseJSON.message}
+    `)
+
+    $('.content').append(errorMessage)
+    console.log(XHR, status, err)
   })
 })
