@@ -19,6 +19,7 @@ const changeQuery = () => {
     data.data.children.forEach((dogPhoto) => {
       const imgTag = document.createElement('img')
       imgTag.src = dogPhoto.data.thumbnail
+      imgTag.title = dogPhoto.data.title
       
       const imgWrapper = document.createElement('a')
       imgWrapper.href = `http://reddit.com${dogPhoto.data.permalink}`
