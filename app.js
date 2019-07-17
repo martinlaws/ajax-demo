@@ -1,46 +1,36 @@
-const title = '<h2>Hello, LHL!</h2>'
+const isThumbnailValid = thumbnail => {
+  if (thumbnail && thumbnail !== 'self') {
+    return true
+  } else {
+    return false
+  }
+}
 
 const handleClick = () => {
   const subreddit = $('#subreddit-input').val()
 
+  $('.content').html(`<p>Loading photos from ${subreddit}</p>`)
+  
   $.ajax({
     type: 'GET',
     url: `https://www.reddit.com/r/${subreddit}.json`,
     dataType: 'JSON'
-  })
-  .done( data => {
+  }).done( response => {
+    const contentDiv = $('.content')
     const markupArray = []
-
-    data.data.children.forEach((post) => {
+  
+    response.data.children.forEach(post => {
       const { thumbnail, title, permalink } = post.data
-
-      if (thumbnail !== 'self' && thumbnail !== '') {
-        const markup = `
-        <a href="http://www.reddit.com${permalink}" target="_blank">
-          <img src="${thumbnail}" title="${title}"/>
-        </a>
-      `
-
-      markupArray.push(markup)
+  
+      if (isThumbnailValid(thumbnail)) {
+        markupArray.push(`
+          <a href="https://www.reddit.com${permalink}" target="_blank">
+            <img alt="${title}" title="${title}" src="${thumbnail}"/>
+          </a>
+        `)
       }
-      
     })
-
-    const formattedMarkup = markupArray.join('')
-    
-    $('.content').append(formattedMarkup)
-  })
-  .fail( (XHR) => {
-    console.log(XHR)
-
-    const { error, message } = XHR.responseJSON
-
-    const errorMarkup = `
-      <div style="background-color: red">
-        <h2 style="color: white">${error}: ${message}</h2>
-      </div>
-    `
-
-    $('.content').append(errorMarkup)
+  
+    contentDiv.html(markupArray.join(''))
   })
 }
